@@ -1,0 +1,208 @@
+plugins {
+  id 'application'
+  id 'java'
+  id 'jacoco'
+  id 'checkstyle'
+  id 'io.spring.dependency-management' version '1.1.7'
+  id 'org.springframework.boot' version '4.0.6'
+  id 'com.github.ben-manes.versions' version '0.54.0'
+  id 'org.sonarqube' version '7.3.0.8198'
+  id 'com.diffplug.spotless' version '8.5.0'
+  id 'org.owasp.dependencycheck' version '12.2.2'
+}
+
+group = 'uk.gov.moj.cp'
+version = '0.1.0'
+
+java {
+  sourceCompatibility = JavaVersion.VERSION_25
+  targetCompatibility = JavaVersion.VERSION_25
+
+  toolchain {
+    languageVersion = JavaLanguageVersion.of(25)
+  }
+}
+
+sourceSets {
+  integrationTest {
+    java {
+      compileClasspath += main.output
+      runtimeClasspath += main.output
+      srcDir file('src/integrationTest/java')
+    }
+    resources.srcDir file('src/integrationTest/resources')
+  }
+}
+
+configurations {
+  integrationTestImplementation.extendsFrom testImplementation
+  integrationTestRuntimeOnly.extendsFrom runtimeOnly
+}
+
+tasks.withType(JavaCompile) {
+  options.compilerArgs << "-Xlint:unchecked" << "-Werror"
+}
+
+tasks.withType(JavaExec).configureEach {
+  javaLauncher.set(javaToolchains.launcherFor(java.toolchain))
+}
+
+tasks.withType(Test) {
+  useJUnitPlatform()
+  testLogging {
+    exceptionFormat = 'full'
+  }
+}
+
+test {
+  failFast = true
+}
+
+task integration(type: Test) {
+  description = "Runs integration tests"
+  group = "Verification"
+  testClassesDirs = sourceSets.integrationTest.output.classesDirs
+  classpath = sourceSets.integrationTest.runtimeClasspath
+  failFast = true
+}
+
+tasks.named('processIntegrationTestResources') {
+  duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+jacocoTestReport {
+  executionData(test, integration)
+  reports {
+    xml.required = true
+    csv.required = false
+    html.required = true
+  }
+}
+
+project.tasks['sonarqube'].dependsOn jacocoTestReport
+project.tasks['check'].dependsOn integration
+
+checkstyle {
+  toolVersion = '13.4.1'
+}
+
+tasks.withType(Checkstyle).configureEach {
+  ignoreFailures = false
+  maxWarnings = 0
+}
+
+sonarqube {
+  properties {
+    property "sonar.projectName", "API CP :: stg-vsp-subscription"
+    property "sonar.projectKey", "uk.gov.moj.cp:stg-vsp-subscription"
+  }
+}
+
+dependencyUpdates {
+  def isNonStable = { String version ->
+    def stableKeyword = ['RELEASE', 'FINAL', 'GA'].any { qualifier -> version.toUpperCase().contains(qualifier) }
+    def regex = /^[0-9,.v-]+$/
+    return !stableKeyword && !(version ==~ regex)
+  }
+  rejectVersionIf { selection ->
+    return isNonStable(selection.candidate.version) && !isNonStable(selection.currentVersion)
+  }
+}
+
+dependencyCheck {
+  suppressionFile = 'config/owasp/suppressions.xml'
+  nvd.datafeedUrl = "file:///opt/vulnz/cache"
+  failBuildOnCVSS = 5.0
+}
+
+repositories {
+  mavenLocal()
+  mavenCentral()
+  maven {
+    url = 'https://jitpack.io'
+  }
+}
+
+ext {
+  log4JVersion = "2.25.4"
+  logbackVersion = "1.5.32"
+  lombokVersion = "1.18.46"
+  springBootVersion = "4.0.6"
+  tomcatVersion = "11.0.22"
+}
+
+ext['snakeyaml.version'] = '2.5'
+
+tasks.named('compileJava') {
+  dependsOn tasks.named('spotlessApply')
+}
+
+dependencies {
+  implementation (group: 'org.springframework.boot', name: 'spring-boot-starter-web') {
+    exclude group: 'org.apache.tomcat.embed', module: 'tomcat-embed-core'
+    exclude group: 'org.apache.tomcat.embed', module: 'tomcat-embed-websocket'
+    exclude group: 'org.apache.tomcat.embed', module: 'tomcat-embed-el'
+  }
+
+  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: tomcatVersion
+  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-websocket', version: tomcatVersion
+  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-el', version: tomcatVersion
+
+  implementation 'org.springframework.boot:spring-boot-starter-aspectj'
+  implementation 'org.springframework.boot:spring-boot-starter-jackson'
+
+  // Loads .env file as Spring property source (so values work when running via Gradle/IntelliJ, not just docker-compose)
+  implementation 'me.paulschwarz:spring-dotenv:4.0.0'
+
+  implementation (group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '3.0.3') {
+    exclude group: 'org.apache.commons', module: 'commons-lang3'
+  }
+  implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.20.0'
+
+  implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: '6.1.8'
+
+  implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: log4JVersion
+  implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j', version: log4JVersion
+  implementation group: 'ch.qos.logback', name: 'logback-classic', version: logbackVersion
+  implementation group: 'ch.qos.logback', name: 'logback-core', version: logbackVersion
+
+  implementation 'org.hibernate.validator:hibernate-validator:9.0.1.Final'
+
+  // API rate limit
+  implementation 'com.bucket4j:bucket4j_jdk17-core:8.19.0'
+  implementation 'com.github.ben-manes.caffeine:caffeine:3.2.4'
+
+  // Metrics
+  implementation 'org.springframework.boot:spring-boot-starter-actuator'
+  implementation group: 'io.micrometer', name: 'micrometer-registry-prometheus', version: '1.16.5'
+  implementation group: 'io.prometheus', name: 'prometheus-metrics-tracer-initializer', version: '1.6.1'
+
+  // UK Gov Notify dependency for e-mail/SMS notifications
+  implementation group: 'uk.gov.service.notify', name: 'notifications-java-client', version: '6.0.0-RELEASE'
+
+  testImplementation(platform('org.junit:junit-bom:6.0.3'))
+  testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+  testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: springBootVersion, {
+    exclude group: 'junit', module: 'junit'
+    exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+  }
+
+  compileOnly group: 'org.projectlombok', name: 'lombok', version: lombokVersion
+  annotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
+}
+
+application {
+  mainClass = 'uk.gov.moj.cp.Application'
+}
+
+bootJar {
+  archiveFileName = "stg-vsp-subscription.jar"
+
+  manifest {
+    attributes('Implementation-Version': project.version.toString())
+  }
+}
+
+wrapper {
+  distributionType = Wrapper.DistributionType.ALL
+}
