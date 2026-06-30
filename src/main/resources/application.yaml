@@ -27,12 +27,8 @@ spring:
     name: stg-vsp-subscription
 
 notifications:
-  gov-notify-api-key: ${GOV_NOTIFY_API_KEY:stgtrackmycaseservicenonprod-791606ca-575a-44de-8a18-313fecf9669b-489e670e-4b38-4bc2-b958-bca60efdf6f0}
-  user-logged-in-email-template-id: ${TMC_USER_LOGGED_IN_TEMPLATE_ID:421fedb5-a9c4-41da-a160-f01ce205d9d4}
+  gov-notify-api-key: ${GOV_NOTIFY_API_KEY:xx}
+  user-logged-in-email-template-id: ${TMC_USER_LOGGED_IN_TEMPLATE_ID:xx}
   service-url: ${TMC_SERVICE_URL:https://track-my-case-dev.apps.live.cloud-platform.service.justice.gov.uk}
-  target-email: ${TMC_TARGET_EMAIL:munish.jalota@justice.gov.uk}
-#notifications:
-#  gov-notify-api-key: ${GOV_NOTIFY_API_KEY:xxx}
-#  user-logged-in-email-template-id: ${TMC_USER_LOGGED_IN_TEMPLATE_ID:xxx}
-#  service-url: ${TMC_SERVICE_URL:https://track-my-case-dev.apps.live.cloud-platform.service.justice.gov.uk}
-#  target-email: ${TMC_TARGET_EMAIL:target@email}
+  target-email: ${TMC_TARGET_EMAIL:xx}
+
