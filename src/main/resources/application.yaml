@@ -31,4 +31,3 @@ notifications:
   user-logged-in-email-template-id: ${TMC_USER_LOGGED_IN_TEMPLATE_ID:xx}
   service-url: ${TMC_SERVICE_URL:https://track-my-case-dev.apps.live.cloud-platform.service.justice.gov.uk}
   target-email: ${TMC_TARGET_EMAIL:xx}
-
