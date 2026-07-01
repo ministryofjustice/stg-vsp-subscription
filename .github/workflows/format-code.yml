@@ -1,0 +1,17 @@
+name: code-formatter
+
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
+
+jobs:
+  format-code:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: ministryofjustice/github-actions/code-formatter@v14
+        with:
+          ignore-files: "networkpolicy.yaml,servicemonitor.yaml,grafana-dashboard-template.yaml,grafana-dashboard.yaml,prometheusrule.yaml"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
