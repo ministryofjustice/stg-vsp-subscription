@@ -35,8 +35,6 @@ public class NotificationController {
         final String caseUrnUpperCase = caseUrn.toUpperCase();
         log.atInfo().log("Received subscription request for caseUrn: {}", caseUrnUpperCase);
 
-        //notificationService.sendUserSubscribedToCaseNotification("test@justice.gov.uk", caseUrnUpperCase);
-
         if (StringUtils.isNotEmpty(fullAuthorizationHeader)) {
             if (fullAuthorizationHeader.startsWith(ApiUtils.BASIC_TOKEN_PREFIX)) {
                 final String userEncodedEmail = fullAuthorizationHeader.substring(ApiUtils.BASIC_TOKEN_PREFIX.length());
