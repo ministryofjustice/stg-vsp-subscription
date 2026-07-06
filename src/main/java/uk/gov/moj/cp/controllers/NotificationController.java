@@ -18,6 +18,8 @@ import uk.gov.moj.cp.util.ApiUtils;
 import java.util.Base64;
 
 import static org.springframework.http.ResponseEntity.ok;
+import static uk.gov.moj.cp.config.ApiPaths.PATH_EMAIL_API_NOTIFICATIONS;
+import static uk.gov.moj.cp.config.ApiPaths.PATH_SMS_API_NOTIFICATIONS;
 
 @RequiredArgsConstructor
 @RestController
@@ -27,10 +29,10 @@ public class NotificationController {
 
     private final NotificationService notificationService;
 
-    @GetMapping("/{case_urn}")
+    @GetMapping(PATH_EMAIL_API_NOTIFICATIONS + "/{case_urn}")
     public ResponseEntity<?> notificationToCase(
-        @PathVariable("case_urn") String caseUrn,
-        @RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String fullAuthorizationHeader) {
+            @PathVariable("case_urn") String caseUrn,
+            @RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String fullAuthorizationHeader) {
 
         final String caseUrnUpperCase = caseUrn.toUpperCase();
         log.atInfo().log("Received subscription request for caseUrn: {}", caseUrnUpperCase);
@@ -44,6 +46,17 @@ public class NotificationController {
         }
 
 
+        return ok().build();
+    }
+
+    @GetMapping(PATH_SMS_API_NOTIFICATIONS + "/{case_urn}")
+    public ResponseEntity<?> smsNotificationToCase(
+            @PathVariable("case_urn") String caseUrn,
+            @RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String fullAuthorizationHeader) {
+
+        final String caseUrnUpperCase = caseUrn.toUpperCase();
+        log.atInfo().log("Received subscription request for caseUrn: {}", caseUrnUpperCase);
+        notificationService.sendTextMessageForTheCaseNotification(caseUrnUpperCase);
         return ok().build();
     }
 }
