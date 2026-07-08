@@ -1,0 +1,38 @@
+services:
+  stg-vsp-subscription:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        http_proxy: ${http_proxy}
+        https_proxy: ${https_proxy}
+        no_proxy: ${no_proxy}
+    env_file:
+      - .env
+    environment:
+      GOV_NOTIFY_API_KEY: ${GOV_NOTIFY_API_KEY:-stgtrackmycaseservicenonprod-791606ca-575a-44de-8a18-313fecf9669b-489e670e-4b38-4bc2-b958-bca60efdf6f0}
+      TMC_USER_LOGGED_IN_TEMPLATE_ID: ${TMC_USER_LOGGED_IN_TEMPLATE_ID:-421fedb5-a9c4-41da-a160-f01ce205d9d4}
+      TMC_SERVICE_URL: ${TMC_SERVICE_URL:-https://track-my-case-dev.apps.live.cloud-platform.service.justice.gov.uk}
+      TMC_TARGET_EMAIL: ${TMC_TARGET_EMAIL:-Vipin.Palengara@justice.gov.uk}
+      LOGGING_LEVEL: ${LOGGING_LEVEL:-INFO}
+      ROOT_APPENDER: ${ROOT_APPENDER:-ASYNC_CONSOLE}
+      ROOT_LOGGING_LEVEL: ${ROOT_LOGGING_LEVEL:-INFO}
+      JSON_CONSOLE_PRETTY_PRINT: ${JSON_CONSOLE_PRETTY_PRINT:-}
+      REFORM_SERVICE_TYPE: ${REFORM_SERVICE_TYPE:-}
+      REFORM_SERVICE_NAME: ${REFORM_SERVICE_NAME:-}
+      REFORM_TEAM: ${REFORM_TEAM:-}
+      REFORM_ENVIRONMENT: ${REFORM_ENVIRONMENT:-local}
+      LOGBACK_DATE_FORMAT: ${LOGBACK_DATE_FORMAT:-}
+      LOGBACK_REQUIRE_THREAD: ${LOGBACK_REQUIRE_THREAD:-}
+      LOGBACK_REQUIRE_ALERT_LEVEL: "false"
+      LOGBACK_REQUIRE_ERROR_CODE: "false"
+      JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
+    ports:
+      - "8888:8888"
+      - "5005:5005"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8888/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
