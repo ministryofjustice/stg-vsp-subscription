@@ -1,5 +1,5 @@
 services:
-  stg-vsp-subscription:
+  stg-vsp-subscription-service:
     build:
       context: .
       dockerfile: Dockerfile

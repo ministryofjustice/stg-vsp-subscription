@@ -15,6 +15,6 @@ class RootControllerTest {
         ResponseEntity<String> response = controller.welcome();
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody()).isEqualTo("Welcome to stg-vsp-subscription");
+        assertThat(response.getBody()).isEqualTo("Welcome to stg-vsp-subscription-service");
     }
 }

@@ -1,2 +1,2 @@
-# stg-vsp-subscription
-stg-vsp-subscription
+# stg-vsp-subscription-service
+stg-vsp-subscription-service

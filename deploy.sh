@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # Define the service name
-SERVICE_NAME="stg-vsp-subscription"
+SERVICE_NAME="stg-vsp-subscription-service"
 
 # Check if the Docker container is running
 if [ "$(docker ps -q -f name=${SERVICE_NAME})" ]; then
@@ -16,8 +16,8 @@ echo "Building application JAR for Docker..."
     exit 1
 }
 
-if [ ! -f build/libs/stg-vsp-subscription.jar ]; then
-    echo "ERROR: build/libs/stg-vsp-subscription.jar was not created. Run: ./gradlew bootJar"
+if [ ! -f build/libs/stg-vsp-subscription-service.jar ]; then
+    echo "ERROR: build/libs/stg-vsp-subscription-service.jar was not created. Run: ./gradlew bootJar"
     exit 1
 fi
 
