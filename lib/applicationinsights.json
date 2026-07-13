@@ -1,7 +1,7 @@
 {
   "connectionString": "${file:/mnt/secrets/PathFinder/app-insights-connection-string}",
   "role": {
-    "name": "stg-vsp-subscription"
+    "name": "stg-vsp-subscription-service"
   },
   "sampling": {
     "overrides": [

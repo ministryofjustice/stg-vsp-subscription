@@ -23,6 +23,6 @@ public class RootController {
      */
     @GetMapping("/")
     public ResponseEntity<String> welcome() {
-        return ok("Welcome to stg-vsp-subscription");
+        return ok("Welcome to stg-vsp-subscription-service");
     }
 }

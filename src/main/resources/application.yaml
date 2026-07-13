@@ -24,7 +24,7 @@ logging:
 
 spring:
   application:
-    name: stg-vsp-subscription
+    name: stg-vsp-subscription-service
 
 notifications:
   gov-notify-api-key: ${GOV_NOTIFY_API_KEY:xx}

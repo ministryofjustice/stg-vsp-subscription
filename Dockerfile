@@ -30,7 +30,7 @@ RUN addgroup --gid 2000 --system appgroup && \
 WORKDIR /app
 
 # Copy the built application JAR from the builder stage
-COPY --from=builder --chown=appuser:appgroup /app/build/libs/stg-vsp-subscription*.jar /app/app.jar
+COPY --from=builder --chown=appuser:appgroup /app/build/libs/stg-vsp-subscription-service*.jar /app/app.jar
 
 # Set the user to the created system user
 USER 2000

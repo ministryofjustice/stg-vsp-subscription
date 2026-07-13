@@ -93,8 +93,8 @@ tasks.withType(Checkstyle).configureEach {
 
 sonarqube {
   properties {
-    property "sonar.projectName", "API CP :: stg-vsp-subscription"
-    property "sonar.projectKey", "uk.gov.moj.cp:stg-vsp-subscription"
+    property "sonar.projectName", "API CP :: stg-vsp-subscription-service"
+    property "sonar.projectKey", "uk.gov.moj.cp:stg-vsp-subscription-service"
   }
 }
 
@@ -196,7 +196,7 @@ application {
 }
 
 bootJar {
-  archiveFileName = "stg-vsp-subscription.jar"
+  archiveFileName = "stg-vsp-subscription-service.jar"
 
   manifest {
     attributes('Implementation-Version': project.version.toString())
